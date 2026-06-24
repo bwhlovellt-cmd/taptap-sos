@@ -17,7 +17,7 @@
 
 ```bash
 # 克隆项目
-git clone https://github.com/bwhlovellt/taptap-sos.git
+git clone https://github.com/bwhlovellt-cmd/taptap-sos.git
 cd taptap-sos
 
 # 安装依赖
