@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="theme-color" content="#1a1a2e">
+  <title>双击守护</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- ===== 应用容器 ===== -->
+  <div id="app">
+
+    <!-- 顶部状态栏 -->
+    <header id="header">
+      <div class="header-inner">
+        <button id="btn-open-settings" class="btn-ghost btn-sm" title="服务器设置">⚙️</button>
+        <h1 class="app-title">双击守护</h1>
+        <div id="connection-status" class="status-dot" title="连接状态">
+          <span class="dot"></span>
+          <span class="label">连接中...</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- 主内容区 -->
+    <main id="main">
+
+      <!-- === 未配对状态 === -->
+      <section id="unpaired-view" class="view active">
+        <div class="hero-area">
+          <div class="hero-icon">
+            <svg viewBox="0 0 100 100" width="120" height="120">
+              <circle cx="50" cy="50" r="48" fill="none" stroke="#e94560" stroke-width="2" stroke-dasharray="8 4" opacity="0.3"/>
+              <circle cx="50" cy="50" r="36" fill="none" stroke="#e94560" stroke-width="1.5" stroke-dasharray="6 3" opacity="0.5"/>
+              <circle cx="50" cy="50" r="24" fill="none" stroke="#e94560" stroke-width="2" opacity="0.7">
+                <animate attributeName="r" values="24;28;24" dur="2s" repeatCount="indefinite"/>
+                <animate attributeName="opacity" values="0.7;0.3;0.7" dur="2s" repeatCount="indefinite"/>
+              </circle>
+              <text x="50" y="44" text-anchor="middle" fill="#e94560" font-size="28" font-weight="bold">⌂</text>
+              <text x="50" y="62" text-anchor="middle" fill="#e94560" font-size="12">NFC</text>
+            </svg>
+          </div>
+          <p class="hero-text">绑定另一台设备，<br>开始守护你关心的人</p>
+        </div>
+
+        <div class="pairing-section">
+          <div class="card">
+            <h3>📱 创建配对</h3>
+            <p class="card-desc">生成配对码，让另一台设备输入加入</p>
+            <button id="btn-generate-code" class="btn btn-primary">
+              <span class="btn-icon">🔢</span>
+              生成配对码
+            </button>
+            <div id="pairing-code-display" class="code-display hidden">
+              <p class="code-label">你的配对码</p>
+              <div class="code-number" id="code-number">------</div>
+              <p class="code-hint">在另一台设备上输入此码完成绑定</p>
+              <button id="btn-copy-code" class="btn btn-outline btn-sm">📋 复制配对码</button>
+            </div>
+          </div>
+
+          <div class="divider">
+            <span>或者</span>
+          </div>
+
+          <div class="card">
+            <h3>🔗 加入配对</h3>
+            <p class="card-desc">输入对方提供的配对码完成绑定</p>
+            <div class="input-group">
+              <input type="text" id="input-pairing-code" class="input-code" 
+                     placeholder="输入6位配对码" maxlength="6" inputmode="numeric" pattern="[0-9]*">
+              <button id="btn-join-code" class="btn btn-secondary">加入</button>
+            </div>
+            <p id="join-error" class="error-text hidden"></p>
+          </div>
+        </div>
+      </section>
+
+      <!-- === 已配对状态 === -->
+      <section id="paired-view" class="view">
+        <!-- 伙伴状态卡片 -->
+        <div class="partner-card">
+          <div class="partner-avatar">
+            <span id="partner-avatar-text">👤</span>
+          </div>
+          <div class="partner-info">
+            <h3 id="partner-name">已连接设备</h3>
+            <p id="partner-status">在线</p>
+          </div>
+          <button id="btn-unpair" class="btn btn-ghost btn-sm">解除绑定</button>
+        </div>
+
+        <!-- 点击操作区域 -->
+        <div class="action-area">
+          <p class="action-hint" id="action-hint">
+            👆 <strong>轻敲两下</strong>发送位置 &nbsp;|&nbsp;
+            👊 <strong>连续敲击</strong>发送预警
+          </p>
+
+          <div class="tap-circle-container">
+            <div id="tap-circle" class="tap-circle">
+              <div class="tap-ripple" id="tap-ripple"></div>
+              <div class="tap-inner">
+                <span class="tap-icon">👆</span>
+                <span class="tap-label">点击此区域</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 点击计数器 -->
+          <div id="tap-counter" class="tap-counter hidden">
+            <span id="tap-count">0</span>
+          </div>
+
+          <!-- 进度条（连续点击时显示） -->
+          <div id="tap-progress-bar" class="progress-bar hidden">
+            <div id="tap-progress-fill" class="progress-fill"></div>
+          </div>
+        </div>
+
+        <!-- 最近事件日志 -->
+        <div id="event-log-section" class="event-section">
+          <h4>📋 事件记录</h4>
+          <div id="event-log" class="event-log">
+            <p class="log-empty">暂无事件记录</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- === 服务器设置（覆盖层） === -->
+      <div id="settings-overlay" class="emergency-overlay hidden" style="background: rgba(15,15,26,0.9);">
+        <div class="emergency-content" style="max-width: 400px;">
+          <div style="font-size: 3rem; margin-bottom: 12px;">⚙️</div>
+          <h2 style="color: var(--text-primary); font-size: 1.3rem;">服务器设置</h2>
+          <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 20px;">
+            配置 WebSocket 服务器地址<br>
+            <small>自部署后端时修改此处</small>
+          </p>
+          <input type="text" id="input-ws-url" class="input-code" 
+                 style="letter-spacing: 1px; font-size: 0.85rem; text-align: left; margin-bottom: 12px;"
+                 placeholder="wss://your-server.com">
+          <div style="display: flex; gap: 8px;">
+            <button id="btn-save-settings" class="btn btn-primary" style="flex: 1;">💾 保存并重连</button>
+            <button id="btn-reset-settings" class="btn btn-outline" style="flex: 1;">🔄 恢复默认</button>
+          </div>
+          <button id="btn-close-settings" class="btn btn-ghost" style="margin-top: 12px; width: 100%;">取消</button>
+          <div id="settings-status" style="font-size: 0.78rem; margin-top: 12px; color: var(--text-muted);"></div>
+        </div>
+      </div>
+
+      <!-- === 紧急预警界面（覆盖层） === -->
+      <div id="emergency-overlay" class="emergency-overlay hidden">
+        <div class="emergency-content">
+          <div class="emergency-icon">🚨</div>
+          <h2 id="emergency-title">紧急预警</h2>
+          <p id="emergency-message"></p>
+          <div class="emergency-location" id="emergency-location"></div>
+          <button id="btn-dismiss-emergency" class="btn btn-danger btn-lg">
+            我知道了
+          </button>
+        </div>
+      </div>
+
+      <!-- === Toast 提示 === -->
+      <div id="toast" class="toast hidden"></div>
+
+    </main>
+
+    <!-- 底部导航 -->
+    <nav id="bottom-nav" class="hidden">
+      <button class="nav-btn active" data-view="paired-view">
+        <span class="nav-icon">🏠</span>
+        <span class="nav-label">首页</span>
+      </button>
+      <button class="nav-btn" id="nav-emergency-send">
+        <span class="nav-icon">🆘</span>
+        <span class="nav-label">紧急求助</span>
+      </button>
+    </nav>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

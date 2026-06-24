@@ -1,0 +1,25 @@
+{
+  "name": "双击守护",
+  "short_name": "双击守护",
+  "description": "轻敲两下发送位置，连续敲击发送紧急预警 — 守护你关心的人",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "theme_color": "#1a1a2e",
+  "background_color": "#0f0f1a",
+  "lang": "zh-CN",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='48' fill='%231a1a2e' stroke='%23e94560' stroke-width='3'/><circle cx='50' cy='50' r='28' fill='none' stroke='%23e94560' stroke-width='2'/><text x='50' y='58' text-anchor='middle' fill='%23e94560' font-size='36' font-weight='bold'>⌂</text></svg>",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='48' fill='%231a1a2e' stroke='%23e94560' stroke-width='3'/><circle cx='50' cy='50' r='28' fill='none' stroke='%23e94560' stroke-width='2'/><text x='50' y='58' text-anchor='middle' fill='%23e94560' font-size='36' font-weight='bold'>⌂</text></svg>",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "name": "taptap-sos",
+  "version": "1.0.0",
+  "description": "双击守护 - 跨平台实时位置分享与紧急预警",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "ws": "^8.21.0"
+  }
+}
