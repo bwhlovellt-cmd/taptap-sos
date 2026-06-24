@@ -16,7 +16,7 @@ const WebSocket = require('ws');
 const crypto = require('crypto');
 
 const PORT = process.env.PORT || 3456;
-const STATIC_DIR = path.join(__dirname, '..', 'app');
+const STATIC_DIR = path.join(__dirname, 'app');
 
 // ============ MIME 类型 ============
 const MIME_TYPES = {
